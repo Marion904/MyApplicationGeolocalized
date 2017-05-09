@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">My ApplicationGeolocalized</string>
+    <string name="need_permission_toast">Vous devez autoriser la géolocalisation</string>
+    <string name="no_permission_toast">Vous ne pouvvez pas utiliser cette app sans localisation</string>
+    <string name="app_start_toast">Go tiger</string>
 </resources>

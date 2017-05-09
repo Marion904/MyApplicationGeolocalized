@@ -15,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
     LocationManager locationManager = null;
     double latitude, longitude;
     String locationProvider = LocationManager.NETWORK_PROVIDER;
+    final int MY_PERMISSION_ACCESS_LOCATION = 1234;
     LocationListener locationListener = new LocationListener() {
         public void onLocationChanged(Location location) {
             makeUseOfNewLocation(location);
@@ -45,22 +46,16 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            new String[] {
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-            };
 
-            Toast.makeText(MainActivity.this, "Vous devez autoriser la géolocalisation", Toast.LENGTH_SHORT).show();
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                    }, MY_PERMISSION_ACCESS_LOCATION);
+            Toast.makeText(MainActivity.this, R.string.need_permission_toast, Toast.LENGTH_SHORT).show();
             return;
         }
-        Toast.makeText(MainActivity.this,"Go tiger", Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this, R.string.app_start_toast, Toast.LENGTH_SHORT).show();
         locationManager.requestLocationUpdates(locationProvider, 0, 0, locationListener);
     }
 
@@ -70,14 +65,35 @@ public class MainActivity extends AppCompatActivity {
         locationManager.removeUpdates(locationListener);
     }
 
-    private void makeUseOfNewLocation(Location location){
-        longitude = (double)Math.round(location.getLongitude()*100d)/100d;
-        latitude =(double)Math.round(location.getLatitude()*100d)/100d;
+    private void makeUseOfNewLocation(Location location) {
+        /**rounding the latitude and longitude to 2 decimals*/
+        longitude = (double) Math.round(location.getLongitude() * 100d) / 100d;
+        latitude = (double) Math.round(location.getLatitude() * 100d) / 100d;
         StringBuilder sb = new StringBuilder();
         sb.append("longitude : ");
         sb.append(longitude);
         sb.append("/ latidude : ");
         sb.append(latitude);
-        Toast.makeText(MainActivity.this,sb.toString(),Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this, sb.toString(), Toast.LENGTH_SHORT).show();
+    }
+
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSION_ACCESS_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                } else {
+                    Toast.makeText(MainActivity.this, R.string.no_permission_toast, Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+
+        }
     }
 }
